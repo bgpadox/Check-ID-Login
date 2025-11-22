@@ -7,7 +7,6 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import threading
-import os
 
 # Thread-safe storage untuk ID
 current_userid_lock = threading.Lock()
@@ -15,9 +14,6 @@ current_userid = ""
 
 FILTER_PATH = "/data/handleMsg.do"
 SIMPLE_LOG = True
-
-# Callback server URL (default: localhost, bisa diubah untuk production)
-CALLBACK_URL = os.getenv('CALLBACK_URL', 'http://localhost:5000/api/v1/callback')
 
 # ANSI Color Codes
 BLUE, GREEN, RED, RESET = "\033[94m", "\033[92m", "\033[91m", "\033[0m"
@@ -110,7 +106,7 @@ def _send_callback_to_server(userid: str, status: str, chip: str = "", error: st
             if error:
                 callback_data['error'] = error
             
-            requests.post(CALLBACK_URL, json=callback_data, timeout=1)
+            requests.post('http://localhost:5000/api/v1/callback', json=callback_data, timeout=1)
         except Exception:
             pass  # Ignore errors jika server tidak tersedia
     

@@ -340,7 +340,7 @@ def queue_worker():
 queue_worker_thread = threading.Thread(target=queue_worker, daemon=True)
 queue_worker_thread.start()
 
-@app.route('/api/v1/login', methods=['GET'])
+@app.route('/v1/login', methods=['GET'])
 def login():
     """API endpoint untuk request login"""
     userid = request.args.get('userid')
