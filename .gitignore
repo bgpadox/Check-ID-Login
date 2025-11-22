@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Temp files
+temp_requests/
+*.tmp
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Nginx (jika ada di project)
+nginx/logs/
+nginx/temp/
+
+# ADB/Emulator
+*.apk
+*.dex
+
+# Backup files
+*.bak
+*.backup
+
