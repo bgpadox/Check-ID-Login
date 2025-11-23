@@ -374,7 +374,7 @@ def login():
     # Jika semua emulator busy, akan masuk ke queue
     process_login_request(request_id, userid, password, event, timestamp)
     
-    # Tunggu response dari mitm.py (max 60 detik)
+    # Tunggu response dari mitm.py (max 10 detik)
     event.wait(timeout=10)
     
     # Ambil result dari memory atau file
@@ -386,18 +386,26 @@ def login():
             if file_data and file_data.get('result'):
                 result = file_data['result']
         
+        # Jika timeout dan tidak ada result, buat result dengan format yang benar
+        if not result:
+            result = {
+                'status': 'login_failed',
+                'error': 'gagal login',
+                'userId': userid
+            }
+            # Update file dengan result timeout
+            _update_request_file(request_id, result)
+            # Update memory juga
+            if request_id in pending_logins:
+                pending_logins[request_id]['result'] = result
+        
         # Cleanup
         if request_id in pending_logins:
             del pending_logins[request_id]
         _delete_temp_file(request_id)
     
-    if result:
-        return jsonify(result)
-    else:
-        return jsonify({
-            'status': 'login_failed',
-            'message': 'Gagal login'
-        }), 408
+    # Return result (sudah pasti ada karena dibuat jika timeout)
+    return jsonify(result)
 
 @app.route('/api/v1/emulators/status', methods=['GET'])
 def emulators_status():
