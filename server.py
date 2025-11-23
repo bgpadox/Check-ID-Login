@@ -231,7 +231,7 @@ def perform_login(userid, password, request_id, device, device_id):
         result = {
             'status': 'login_failed',
             'userId': userid,
-            'error': 'Device not available'
+            'error': 'Gagal login'
         }
         _update_request_file(request_id, result)
         with pending_lock:
@@ -323,7 +323,7 @@ def queue_worker():
                 result = {
                     'status': 'login_failed',
                     'userId': userid,
-                    'error': 'All emulators busy, request timeout'
+                    'error': 'Gagal login'
                 }
                 _update_request_file(request_id, result)
                 with pending_lock:
@@ -348,8 +348,8 @@ def login():
     
     if not userid or not password:
         return jsonify({
-            'status': 'error',
-            'message': 'userid and password are required'
+            'status': 'login_failed',
+            'message': 'Gagal login'
         }), 400
     
     # Generate unique request ID dengan timestamp
@@ -375,7 +375,7 @@ def login():
     process_login_request(request_id, userid, password, event, timestamp)
     
     # Tunggu response dari mitm.py (max 60 detik)
-    event.wait(timeout=60)
+    event.wait(timeout=10)
     
     # Ambil result dari memory atau file
     with pending_lock:
@@ -395,8 +395,8 @@ def login():
         return jsonify(result)
     else:
         return jsonify({
-            'status': 'error',
-            'message': 'Login request timeout'
+            'status': 'login_failed',
+            'message': 'Gagal login'
         }), 408
 
 @app.route('/api/v1/emulators/status', methods=['GET'])
